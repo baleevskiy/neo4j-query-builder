@@ -1,0 +1,30 @@
+{
+  "name": "neo4j-query-builder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/baleevskiy/neo4j-query-builder.git"
+  },
+  "author": "baleevskiy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/baleevskiy/neo4j-query-builder/issues"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.14.150",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "eslint": "^6.8.0",
+    "jest": "^25.4.0",
+    "ts-jest": "^25.4.0",
+    "typescript": "^3.8.3"
+  },
+  "homepage": "https://github.com/baleevskiy/neo4j-query-builder#readme"
+}
