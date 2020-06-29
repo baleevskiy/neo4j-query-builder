@@ -1,9 +1,9 @@
 import _ from "lodash";
-import { QueryBuilder } from "../index";
+import { ContextBuilder } from "../index";
 
-describe("QueryBuilder", () => {
+describe("ContextBuilder", () => {
   it("should compose QueryContext", async () => {
-    const neo = new QueryBuilder<string>(_.identity);
+    const neo = new ContextBuilder<string>(_.identity);
 
     const typeQuery = neo.find({ OneType: { foo: "bar" } });
     const queryOne = await typeQuery.where({ OtherPart: "otherCondition" });
@@ -29,7 +29,7 @@ describe("QueryBuilder", () => {
   });
 
   it("should set aliases", async () => {
-    const neo = new QueryBuilder<string>(_.identity);
+    const neo = new ContextBuilder<string>(_.identity);
     const queryOne = await neo
       .find({ Rounds: { date__gt: "testDate" } })
       .with(neo.find({ Game: { date__gt: "2020-01-01" } }), "games");
