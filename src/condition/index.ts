@@ -4,4 +4,6 @@ class Condition {
     public readonly comparator: string,
     public readonly right: any
   ) {}
+
+  static for(keyName);
 }
