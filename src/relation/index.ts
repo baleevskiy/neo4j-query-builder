@@ -1,6 +1,6 @@
 class Relation {
   constructor(
-    public readonly leftLabel: string,
+    public readonly name: string,
     public readonly rightLabel: string,
     public readonly relationName?: string
   ) {}
