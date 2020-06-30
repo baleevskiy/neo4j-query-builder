@@ -11,45 +11,54 @@ interface MergeClause {}
 interface OnCreateSetClause {}
 interface SetClause {}
 interface WhereClause {}
+interface CreateClause {}
+interface ReturnClause {}
 
-interface ContextResolver<T> {
+interface ContextResolver<T = any> {
   (context: QueryContext): T;
 }
 export interface QueryContext {
   with?: AliasMap<QueryContext>;
   aliases?: AliasMap<string>;
   find?: FindClause[];
+  findAll?: FindClause[];
   where?: WhereClause[];
   merge?: MergeClause[];
+  create?: CreateClause[];
   onCreateSet?: OnCreateSetClause[];
-  setClause?: SetClause[];
+  set?: SetClause[];
+  return?: ReturnClause[];
 }
 
-export class ContextBuilder<T> {
+export class ContextBuilder<T = any> {
   private context: QueryContext = {};
-  private contextResolver: ContextResolver<T>;
+  private contextResolver: ContextResolver;
 
-  constructor(contextResolver: ContextResolver<T>, context = {}) {
+  constructor(contextResolver: ContextResolver, context = {}) {
     this.context = context;
     this.contextResolver = contextResolver;
   }
 
-  private of(context: any): ContextBuilder<T> {
+  private of(context: any): ContextBuilder {
     return new ContextBuilder(this.contextResolver, context);
   }
 
-  private contextAdd(key: string, value: any): ContextBuilder<T> {
+  private contextAdd(key: string, value: any): ContextBuilder {
     value = _.get(this.context, key, []).concat(value);
     return this.of(_.defaults({}, { [key]: value }, this.context));
   }
 
-  private contextSet(mapName: string, key: string, value: any) {
+  private contextSetKey(mapName: string, key: string, value: any) {
     value = _.defaults({ [key]: value }, _.get(this.context, mapName, {}));
     return this.of(_.defaults({}, { [mapName]: value }, this.context));
   }
 
-  with(withClause: ContextBuilder<T>, alias: string) {
-    return this.contextSet("with", alias, withClause.context);
+  private contextSet(mapName: string, value: any) {
+    return this.of(_.defaults({}, { [mapName]: value }, this.context));
+  }
+
+  with(withClause: ContextBuilder, alias: string) {
+    return this.contextSetKey("with", alias, withClause.context);
   }
 
   find(findClause: FindClause) {
@@ -58,6 +67,10 @@ export class ContextBuilder<T> {
 
   where(whereClause: WhereClause) {
     return this.contextAdd("where", whereClause);
+  }
+
+  return(returnClause: ReturnClause) {
+    return this.contextSet("return", returnClause);
   }
 
   merge(mergeClause: MergeClause) {

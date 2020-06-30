@@ -1,20 +1,14 @@
-import _ from 'lodash'
-import {QueryContext} from '../context-builder'
-class QueryBuilder{
-  
-  with?: AliasMap<QueryContext>;
-  aliases?: AliasMap<string>;
-  find?: FindClause[];
-  where?: WhereClause[];
-  merge?: MergeClause[];
-  onCreateSet?: OnCreateSetClause[];
-  setClause?: SetClause[];
+import _ from "lodash";
+import { QueryContext, ContextBuilder } from "../context-builder";
 
-  buildQuery(context: QueryContext): string {
-    const resultStatements = []
-    _.map(_.get(context,'find',[]), (findClause) => {
-      `MATCH ${}`
-    })
+/**
+ *  this class puts all the classes
+ *
+ **/
+class QueryBuilder {
+  public mapContextValues(context: QueryContext) {}
 
-  }
+  for(resolver: (query: string) => any): ContextBuilder {}
+
+  buildQuery(context: QueryContext): string {}
 }
