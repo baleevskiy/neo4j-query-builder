@@ -12,6 +12,9 @@ describe("ContextBuilder", () => {
       .where({ OtherPartThree: { foo3: "bar4" } })
       .merge({
         Data: "data",
+      })
+      .set({
+        a: { date__merge: { a: "b" } },
       });
 
     expect(queryOne).toEqual({
@@ -39,4 +42,6 @@ describe("ContextBuilder", () => {
       with: { games: { find: [{ Game: { date__gt: "2020-01-01" } }] } },
     });
   });
+
+  it("should throw when use find and findAll in the same context");
 });

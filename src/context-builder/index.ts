@@ -6,28 +6,45 @@ interface AliasMap<T> {
   [key: string]: T;
 }
 
-interface FindClause {}
+interface MatchClause {}
+interface FindOrCreateClause {}
 interface MergeClause {}
 interface OnCreateSetClause {}
 interface SetClause {}
 interface WhereClause {}
 interface CreateClause {}
 interface ReturnClause {}
+interface OrderByClause {}
+interface DeleteClause {}
+interface LimitClause {}
 
 interface ContextResolver<T = any> {
   (context: QueryContext): T;
 }
 export interface QueryContext {
   with?: AliasMap<QueryContext>;
+
   aliases?: AliasMap<string>;
-  find?: FindClause[];
-  findAll?: FindClause[];
-  where?: WhereClause[];
+  throwIfNotFound?: boolean;
+
+  // patterns
+  match?: MatchClause[];
   merge?: MergeClause[];
   create?: CreateClause[];
+
+  // filters and update clauses
+  where?: WhereClause[];
   onCreateSet?: OnCreateSetClause[];
   set?: SetClause[];
+
+  //
+  delete?: DeleteClause[];
+  limit?: LimitClause[];
+  orderBy?: OrderByClause[];
   return?: ReturnClause[];
+
+  returnList?: boolean;
+  returnSingle?: boolean;
 }
 
 export class ContextBuilder<T = any> {
@@ -61,8 +78,24 @@ export class ContextBuilder<T = any> {
     return this.contextSetKey("with", alias, withClause.context);
   }
 
-  find(findClause: FindClause) {
-    return this.contextAdd("find", findClause);
+  find(MatchClause: MatchClause) {
+    if (this.context.returnList) {
+      throw new Error("Don't mix findAll and find");
+    }
+    this.contextSet("returnSingle", true);
+    return this.contextAdd("find", MatchClause);
+  }
+
+  findAll(MatchClause: MatchClause) {
+    if (this.context.returnSingle) {
+      throw new Error("Don't mix findAll and find");
+    }
+    this.contextSet("returnList", true);
+    return this.contextAdd("find", MatchClause);
+  }
+
+  findOrCreate(mergeClause: MergeClause) {
+    return this.merge(mergeClause);
   }
 
   where(whereClause: WhereClause) {
@@ -77,8 +110,28 @@ export class ContextBuilder<T = any> {
     return this.contextAdd("merge", mergeClause);
   }
 
+  set(setClause: SetClause) {
+    return this.contextAdd("set", setClause);
+  }
+
   onCreateSetClause(onCreateSetClause: OnCreateSetClause) {
     return this.contextAdd("onCreateSet", onCreateSetClause);
+  }
+
+  delete(deleteClause: DeleteClause) {
+    return this.contextAdd("delete", deleteClause);
+  }
+
+  limit(limit: number, offset: number) {
+    return this.contextSet("limit", { limit, offset });
+  }
+
+  orderBy(orderBy: OrderByClause) {
+    return this.contextSet("orderBy", orderBy);
+  }
+
+  throwIfNotFound() {
+    return this.contextSet("throwIfNotFound", true);
   }
 
   get promise(): Promise<T> {

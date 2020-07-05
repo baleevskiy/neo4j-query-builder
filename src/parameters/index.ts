@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { QueryContext } from "../context-builder";
 
-interface ComparatorMap {
+interface OperatorMap {
   contains: string;
   eq: string;
   gt: string;
@@ -11,6 +11,7 @@ interface ComparatorMap {
   lte: string;
   ne: string;
   is_null: string;
+  merge: string;
 }
 class Comparator {
   private constructor(
@@ -18,7 +19,7 @@ class Comparator {
     public readonly value: any
   ) {}
 
-  static comparators: ComparatorMap = {
+  static operators: OperatorMap = {
     contains: "CONTAINS",
     eq: "=",
     gt: ">",
@@ -28,10 +29,11 @@ class Comparator {
     lte: "<=",
     ne: "<>",
     is_null: "IS NULL",
+    merge: "+=",
   };
 
-  static for(comparatorName: keyof ComparatorMap, value: any) {
-    const comparator = Comparator.comparators[comparatorName] as string;
+  static for(comparatorName: keyof OperatorMap, value: any) {
+    const comparator = Comparator.operators[comparatorName] as string;
     return new Comparator(comparator, value);
   }
 }
@@ -51,7 +53,7 @@ export class FilterParameters {
   static for(input: any): FilterParameters[] {
     return _.map(input, (value, key) => {
       const parts = _.split(key, "__");
-      if (parts.length > 1 && _.has(Comparator.comparators, _.last(parts)!)) {
+      if (parts.length > 1 && _.has(Comparator.operators, _.last(parts)!)) {
         return [_.initial(parts), _.last(parts), value];
       }
       return [parts, "eq", value];
